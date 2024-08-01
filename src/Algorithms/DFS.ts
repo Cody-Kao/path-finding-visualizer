@@ -21,7 +21,7 @@ const DFS = (
       col >= 0 &&
       col < cols &&
       grid[row][col] != 0 &&
-      grid[row][col] != 4
+      grid[row][col] != 5
     );
   };
 

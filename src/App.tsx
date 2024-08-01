@@ -6,6 +6,7 @@ import {
   AlgorithmDescriptionDict,
   AlgorithmFunctionDict,
   cubeColors,
+  CubeOptions,
 } from "./Const/Const";
 import { FaPlayCircle } from "react-icons/fa";
 import { IoReturnDownBackSharp } from "react-icons/io5";

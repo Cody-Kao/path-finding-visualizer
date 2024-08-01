@@ -1,4 +1,4 @@
-import { directions } from "../Const/Const";
+import { CubeOptions, directions } from "../Const/Const";
 import { AlgorithmAnimationArray } from "../Types/Types";
 import { MinPriorityQueue } from "@datastructures-js/priority-queue";
 
@@ -42,7 +42,7 @@ const Dijkstra = (
       col >= 0 &&
       col < cols &&
       grid[row][col] != 0 &&
-      grid[row][col] != 4
+      grid[row][col] != 5
     );
   };
 
@@ -66,7 +66,7 @@ const Dijkstra = (
       const newRow = row + dx;
       const newCol = col + dy;
       if (isValid(newRow, newCol) && !visited[newRow][newCol]) {
-        const newCost = curCost + grid[newRow][newCol];
+        const newCost = curCost + CubeOptions[grid[newRow][newCol]].cost;
         if (newCost < distance[newRow][newCol]) {
           distance[newRow][newCol] = newCost;
           parentMap[newRow][newCol] = [row, col];

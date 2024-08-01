@@ -22,7 +22,7 @@ const BFS = (
       y >= 0 &&
       y < cols &&
       grid[x][y] !== 0 &&
-      grid[x][y] !== 4
+      grid[x][y] !== 5
     );
   };
 

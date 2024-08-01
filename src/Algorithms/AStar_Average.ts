@@ -16,7 +16,7 @@ const manhattanDistance = (
   return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
 };
 
-const AStar = (
+const AStar_Average = (
   grid: number[][],
   start: [number, number],
   destination: [number, number],
@@ -38,6 +38,32 @@ const AStar = (
       grid[x][y] !== 0 &&
       grid[x][y] !== 5
     );
+  };
+
+  const heuristicAverage = (
+    node: Node,
+    grid: number[][],
+    destination: [number, number],
+    closedSet: Set<string>,
+  ): number => {
+    let neighborNum = 0;
+    let totalCost = 0;
+
+    for (const [dx, dy] of directions) {
+      const nx = node.position[0] + dx;
+      const ny = node.position[1] + dy;
+      const neighborKey = [nx, ny].toString();
+
+      if (isValid(nx, ny) && !closedSet.has(neighborKey)) {
+        neighborNum++;
+        totalCost +=
+          node.f +
+          CubeOptions[grid[nx][ny]].cost +
+          manhattanDistance([nx, ny], destination);
+      }
+    }
+
+    return neighborNum > 0 ? totalCost / neighborNum : Infinity;
   };
 
   const startNode: Node = {
@@ -90,14 +116,14 @@ const AStar = (
       if (closedSet.has(neighborKey)) continue;
 
       const g = currentNode.g + CubeOptions[grid[newX][newY]].cost;
-      const h = manhattanDistance(neighborPosition, destination);
-      const f = g + h;
       const newNode: Node = {
         position: neighborPosition,
         g,
-        f,
+        f: 0, // We'll calculate this after
         parent: currentNode,
       };
+      const h = heuristicAverage(newNode, grid, destination, closedSet);
+      newNode.f = g + h;
 
       if (!openSet.has(neighborKey)) {
         openQueue.enqueue(newNode);
@@ -106,7 +132,7 @@ const AStar = (
         const existingNode = openSet.get(neighborKey)!;
         if (g < existingNode.g) {
           existingNode.g = g;
-          existingNode.f = f;
+          existingNode.f = g + h;
           existingNode.parent = currentNode;
           // Update the node in the priority queue
           openQueue.remove((node) => node.position.toString() === neighborKey);
@@ -119,7 +145,7 @@ const AStar = (
   return { exploreArray, pathArray };
 };
 
-export const runAStar = (
+export const runAStar_Average = (
   isPlaying: boolean,
   grid: number[][],
   start: [number, number],
@@ -132,7 +158,7 @@ export const runAStar = (
   if (isPlaying) {
     return;
   }
-  const { exploreArray, pathArray } = AStar(grid, start, destination);
+  const { exploreArray, pathArray } = AStar_Average(grid, start, destination);
   if (pathArray.length === 0) {
     alert("No valid path found");
     return;

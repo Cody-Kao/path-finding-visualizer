@@ -1,4 +1,4 @@
-export type CubeType = 2 | 3 | 4;
+export type CubeType = 2 | 3 | 4 | 5;
 
 export type AlgorithmDescription = {
   title: string;

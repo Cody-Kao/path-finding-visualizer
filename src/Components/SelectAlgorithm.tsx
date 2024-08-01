@@ -15,6 +15,7 @@ export default function SelectAlgorithm({
     >
       <option value="Dijkstra">Dijkstra</option>
       <option value="A*">A*</option>
+      <option value="A*Average">A*(average cost)</option>
       <option value="DFS">DFS</option>
       <option value="BFS">BFS</option>
     </select>
