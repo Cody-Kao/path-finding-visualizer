@@ -1,17 +1,18 @@
-import { directions } from "../Const/Const";
+import { CubeOptions, directions } from "../Const/Const";
 import { AlgorithmAnimationArray } from "../Types/Types";
 
-const BFS = (
+export const BFS = (
   grid: number[][],
   start: [number, number],
   destination: [number, number],
 ): {
   exploreArray: AlgorithmAnimationArray;
   pathArray: AlgorithmAnimationArray;
+  actualCost: number;
 } => {
   const rows = grid.length;
   const cols = grid[0].length;
-
+  let actualCost = 0;
   const exploreArray: AlgorithmAnimationArray = [];
   const pathArray: AlgorithmAnimationArray = [];
 
@@ -40,6 +41,7 @@ const BFS = (
     if (x === destination[0] && y === destination[1]) {
       let current: [number, number] | null = destination;
       while (current) {
+        actualCost += CubeOptions[grid[current[0]][current[1]]].cost;
         pathArray.push(current);
         current = parentMap[`${current[0]},${current[1]}`];
       }
@@ -59,26 +61,5 @@ const BFS = (
     }
   }
 
-  return { exploreArray, pathArray };
-};
-
-export const runBFS = (
-  isPlaying: boolean,
-  grid: number[][],
-  start: [number, number],
-  destination: [number, number],
-  runAnimation: (
-    explreArray: AlgorithmAnimationArray,
-    pathArray: AlgorithmAnimationArray,
-  ) => void,
-) => {
-  if (isPlaying) {
-    return;
-  }
-  const { exploreArray, pathArray } = BFS(grid, start, destination);
-  if (pathArray.length == 0) {
-    alert("no valid answer");
-    return;
-  }
-  runAnimation(exploreArray, pathArray);
+  return { exploreArray, pathArray, actualCost };
 };

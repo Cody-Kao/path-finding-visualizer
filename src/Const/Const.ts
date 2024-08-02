@@ -1,8 +1,8 @@
-import { runAStar_Average } from "../Algorithms/AStar_Average";
-import { runAStar } from "../Algorithms/AStar";
-import { runBFS } from "../Algorithms/BFS";
-import { runDFS } from "../Algorithms/DFS";
-import { runDijkstra } from "../Algorithms/Dijkstra";
+import { AStar } from "../Algorithms/AStar";
+import { AStar_Average } from "../Algorithms/AStar_Average";
+import { BFS } from "../Algorithms/BFS";
+import { DFS } from "../Algorithms/DFS";
+import { Dijkstra } from "../Algorithms/Dijkstra";
 import { AlgorithmDescription, AlgorithmFunction } from "../Types/Types";
 
 export const minSpeed = 10;
@@ -49,11 +49,11 @@ export const directions = [
 export const AlgorithmFunctionDict: {
   [algorithm: string]: AlgorithmFunction | null;
 } = {
-  runDijkstra: runDijkstra,
-  "A*": runAStar,
-  "A*Average": runAStar_Average,
-  DFS: runDFS,
-  BFS: runBFS,
+  Dijkstra: Dijkstra,
+  "A*": AStar,
+  "A*Average": AStar_Average,
+  DFS: DFS,
+  BFS: BFS,
 };
 
 export const AlgorithmDescriptionDict: {

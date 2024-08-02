@@ -1,28 +1,20 @@
 import { CubeOptions, directions } from "../Const/Const";
-import { AlgorithmAnimationArray } from "../Types/Types";
 import { MinPriorityQueue } from "@datastructures-js/priority-queue";
 
-export const Dijkstra = (
+// this function is primarily for calculating the cost of global shortest path
+export const Dijkstra_BestCost = (
   grid: number[][],
   start: [number, number],
   destination: [number, number],
-): {
-  exploreArray: AlgorithmAnimationArray;
-  pathArray: AlgorithmAnimationArray;
-  actualCost: number;
-} => {
+): { bestCost: number; shortestPath: [number, number][] } => {
   const rows = grid.length;
   const cols = grid[0].length;
-  const exploreArray: AlgorithmAnimationArray = [];
-  const pathArray: AlgorithmAnimationArray = [];
-
-  let actualCost = 0;
-
-  // 這邊用2D array而不是dictionary去減少hash的overhead
+  let bestCost = 0;
+  const shortestPath: [number, number][] = [];
   const visited: boolean[][] = Array.from({ length: rows }, () =>
     Array(cols).fill(false),
   );
-  // 這邊一樣用2D array而不是dictionary去減少hash的overhead
+
   const parentMap: ([number, number] | null)[][] = Array.from(
     { length: rows },
     () => Array(cols).fill(null),
@@ -33,7 +25,6 @@ export const Dijkstra = (
   );
   distance[start[0]][start[1]] = 0;
 
-  // 去比較index為2的值
   const heap = new MinPriorityQueue<[number, number, number]>(
     (array) => array[2],
   );
@@ -56,16 +47,16 @@ export const Dijkstra = (
       continue;
     }
     visited[row][col] = true;
-    exploreArray.push([row, col]);
+
     if (row == destination[0] && col == destination[1]) {
-      let current: [number, number] = [row, col];
-      while (current !== null) {
-        actualCost += CubeOptions[grid[current[0]][current[1]]].cost;
-        pathArray.push(current);
-        current = parentMap[current[0]][current[1]]!;
+      bestCost = distance[row][col];
+      let current: [number, number] | null = [row, col];
+      while (current != null) {
+        shortestPath.push(current);
+        current = parentMap[current[0]][current[1]];
       }
-      pathArray.reverse();
-      break;
+      shortestPath.reverse();
+      return { bestCost, shortestPath };
     }
     for (const [dx, dy] of directions) {
       const newRow = row + dx;
@@ -81,5 +72,5 @@ export const Dijkstra = (
     }
   }
 
-  return { exploreArray, pathArray, actualCost };
+  return { bestCost, shortestPath };
 };

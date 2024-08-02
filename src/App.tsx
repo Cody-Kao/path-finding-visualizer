@@ -12,16 +12,33 @@ import { IoReturnDownBackSharp } from "react-icons/io5";
 import { GrPowerReset } from "react-icons/gr";
 import { AlgorithmAnimationArray, CubeType } from "./Types/Types";
 import SelectSpeed from "./Components/SelectSpeed";
+import ShowCost from "./Components/ShowCost";
+import { Dijkstra_BestCost } from "./Algorithms/Dijkstra_BestCost";
 
 function App() {
   const [rows, setRows] = useState<number>(0);
   const [cols, setCols] = useState<number>(0);
-  const { isPlaying, setIsPlaying, grid, setGrid, cube, algorithm, speed } =
-    usePathFindContext();
+  const {
+    isPlaying,
+    setIsPlaying,
+    grid,
+    setGrid,
+    cube,
+    algorithm,
+    speed,
+    isAnimationComplete,
+    setIsAnimaitionComplete,
+  } = usePathFindContext();
   const containerRef = useRef<HTMLDivElement>(null);
   const cubeSize = 24;
 
   const [isMouseUp, setIsMouseUp] = useState<boolean>(true);
+
+  // 顯示final cost
+  const [bestCost, setBestCost] = useState<number>(Infinity);
+  const [actualCost, setActualCost] = useState<number>(Infinity);
+  // 顯示最佳路徑
+  const [answerPath, setAnswerPath] = useState<[number, number][]>([]);
 
   const resetGrid = (rows: number, cols: number) => {
     const newGrid = Array.from({ length: rows }, () => Array(cols).fill(2));
@@ -41,13 +58,16 @@ function App() {
     }, 0);
     Array.from(containerRef.current!.getElementsByClassName("cube")).forEach(
       (cube) => {
-        cube.classList.remove("explored", "answer");
+        cube.classList.remove("explored", "result", "answer");
       },
     );
+    setIsPlaying(false);
+    setIsAnimaitionComplete(false);
+    setBestCost(Infinity);
+    setActualCost(Infinity);
   };
 
   const handleReset = () => {
-    setIsPlaying(false);
     clearAnimation();
     resetGrid(rows, cols);
   };
@@ -57,14 +77,14 @@ function App() {
     pathArray: AlgorithmAnimationArray,
   ) => {
     const curSpeed = Math.floor(1000 / speed);
-
+    const cubes = containerRef.current?.getElementsByClassName("cube");
     exploreArray.forEach((indexes, index) => {
       const [row, col] = indexes;
       setTimeout(() => {
         // containerRef.current?.getElementsByClassName("cube") 這行是從parent div去把所有button都選取
-        containerRef.current
-          ?.getElementsByClassName("cube")
-          [row * cols + col].classList.add("explored");
+        if (cubes) {
+          cubes[row * cols + col].classList.add("explored");
+        }
       }, curSpeed * index);
     });
     const finalCountDown = curSpeed * (exploreArray.length - 1);
@@ -72,11 +92,14 @@ function App() {
       pathArray.forEach((indexes, index) => {
         const [row, col] = indexes;
         setTimeout(() => {
-          containerRef.current
-            ?.getElementsByClassName("cube")
-            [row * cols + col].classList.add("answer");
+          if (cubes) {
+            cubes[row * cols + col].classList.add("result");
+          }
         }, 10 * index);
       });
+      setTimeout(() => {
+        setIsAnimaitionComplete(true);
+      }, pathArray.length * 10);
     }, finalCountDown);
   };
 
@@ -89,10 +112,42 @@ function App() {
         alert("no available algorithm is chosen");
         return;
       }
-      f!(isPlaying, grid.slice(), [0, 0], [rows - 1, cols - 1], runAnimation);
+      if (isPlaying) {
+        return;
+      }
+      const start: [number, number] = [0, 0];
+      const destination: [number, number] = [rows - 1, cols - 1];
+      // run chosen algorithm
+      const { exploreArray, pathArray, actualCost } = f!(
+        grid,
+        start,
+        destination,
+      );
+      if (pathArray.length === 0) {
+        alert("No valid path found");
+        return;
+      }
+      // handle final cost displaying
+      const { bestCost, shortestPath } = Dijkstra_BestCost(
+        grid,
+        start,
+        destination,
+      );
+      setBestCost(bestCost);
+      setActualCost(actualCost);
+      setAnswerPath(shortestPath);
+      runAnimation(exploreArray, pathArray);
     } else {
-      setIsPlaying(false);
       clearAnimation();
+    }
+  };
+
+  const displayAnswerPath = (answerPath: [number, number][]) => {
+    const cubes = containerRef.current?.getElementsByClassName("cube");
+    for (const [row, col] of answerPath) {
+      if (cubes) {
+        cubes[row * cols + col].classList.toggle("answer");
+      }
     }
   };
 
@@ -205,7 +260,7 @@ function App() {
           </button>
         </div>
       </div>
-      <div className="hidden w-4/5 border border-sky-700 p-4 pb-2 sm:flex lg:w-3/5">
+      <div className="relative hidden w-4/5 border border-sky-700 p-4 pb-2 sm:flex lg:w-3/5">
         <div className="flex w-2/3 flex-col items-start justify-start gap-3">
           <a
             href={AlgorithmDescriptionDict[algorithm]?.link}
@@ -243,6 +298,12 @@ function App() {
             </span>
           </div>
         </div>
+        <ShowCost
+          bestCost={bestCost}
+          actualCost={actualCost}
+          isDisable={!(isPlaying && isAnimationComplete)} // 要動畫結束 並且按過開始鍵才能觸發
+          onToggle={() => displayAnswerPath(answerPath)} // 用來控制App組件的顯示最佳路徑的state
+        />
       </div>
       <div
         id="grid-container"

@@ -21,7 +21,7 @@ export default function SelectCube({ isDisabled }: { isDisabled: boolean }) {
           ),
         )}
       </select>
-      <div className="absolute inset-y-0 right-[20px] flex items-center px-1">
+      <div className="absolute inset-y-0 right-[15px] flex items-center px-1 md:right-[20px]">
         <div
           className={`h-4 w-4 rounded-full border-2 opacity-90 ${
             CubeOptions[cube].color

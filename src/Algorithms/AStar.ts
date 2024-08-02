@@ -16,19 +16,20 @@ const manhattanDistance = (
   return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
 };
 
-const AStar = (
+export const AStar = (
   grid: number[][],
   start: [number, number],
   destination: [number, number],
 ): {
   exploreArray: AlgorithmAnimationArray;
   pathArray: AlgorithmAnimationArray;
+  actualCost: number;
 } => {
   const rows = grid.length;
   const cols = grid[0].length;
   const exploreArray: AlgorithmAnimationArray = [];
   const pathArray: AlgorithmAnimationArray = [];
-
+  let actualCost = 0;
   const isValid = (x: number, y: number): boolean => {
     return (
       x >= 0 &&
@@ -56,6 +57,9 @@ const AStar = (
     const path: [number, number][] = [];
     let currentNode: Node | null = node;
     while (currentNode) {
+      actualCost +=
+        CubeOptions[grid[currentNode.position[0]][currentNode.position[1]]]
+          .cost;
       path.unshift(currentNode.position);
       currentNode = currentNode.parent;
     }
@@ -74,7 +78,7 @@ const AStar = (
       currentNode.position[1] === destination[1]
     ) {
       pathArray.push(...getPath(currentNode));
-      return { exploreArray, pathArray };
+      return { exploreArray, pathArray, actualCost };
     }
 
     closedSet.add(currentKey);
@@ -116,26 +120,5 @@ const AStar = (
     }
   }
 
-  return { exploreArray, pathArray };
-};
-
-export const runAStar = (
-  isPlaying: boolean,
-  grid: number[][],
-  start: [number, number],
-  destination: [number, number],
-  runAnimation: (
-    exploreArray: AlgorithmAnimationArray,
-    pathArray: AlgorithmAnimationArray,
-  ) => void,
-) => {
-  if (isPlaying) {
-    return;
-  }
-  const { exploreArray, pathArray } = AStar(grid, start, destination);
-  if (pathArray.length === 0) {
-    alert("No valid path found");
-    return;
-  }
-  runAnimation(exploreArray, pathArray);
+  return { exploreArray, pathArray, actualCost };
 };

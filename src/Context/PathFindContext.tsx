@@ -17,6 +17,8 @@ interface PathFindContextType {
   setCube: (newCube: CubeType) => void;
   speed: number;
   setSpeed: (speed: number) => void;
+  isAnimationComplete: boolean;
+  setIsAnimaitionComplete: (complete: boolean) => void;
 }
 
 export const usePathFindContext = () => {
@@ -41,6 +43,7 @@ export default function PathFindContextProvider({
   const [cube, setCube] = useState<CubeType>(2);
   const [grid, setGrid] = useState<number[][]>([]);
   const [speed, setSpeed] = useState<number>(minSpeed);
+  const [isAnimationComplete, setIsAnimaitionComplete] = useState(false);
 
   const value = {
     isPlaying,
@@ -53,6 +56,8 @@ export default function PathFindContextProvider({
     setCube,
     speed,
     setSpeed,
+    isAnimationComplete,
+    setIsAnimaitionComplete,
   };
   return (
     <PathFindContext.Provider value={value}>
