@@ -48,7 +48,9 @@ export const AStar = (
     parent: null,
   };
 
-  const openQueue = new MinPriorityQueue<Node>((node: Node) => node.f);
+  const openQueue = new MinPriorityQueue<Node>(
+    (node: Node) => node.f * 10 + (node.f - node.g), // 讓他先判斷f 如果一樣的話再判斷h 避免掉同樣cost的node在heap裡面的順序不理想
+  );
   openQueue.enqueue(startNode);
   const closedSet: Set<string> = new Set();
   const openSet: Map<string, Node> = new Map([[start.toString(), startNode]]);

@@ -75,7 +75,9 @@ export const AStar_Average = (
     parent: null,
   };
 
-  const openQueue = new MinPriorityQueue<Node>((node: Node) => node.f);
+  const openQueue = new MinPriorityQueue<Node>(
+    (node: Node) => node.f * 10 + (node.f - node.g),
+  );
   openQueue.enqueue(startNode);
   const closedSet: Set<string> = new Set();
   const openSet: Map<string, Node> = new Map([[start.toString(), startNode]]);

@@ -79,7 +79,7 @@ export const AlgorithmDescriptionDict: {
     title: "A*(Average Cost)",
     link: "https://zh.wikipedia.org/zh-tw/A*%E6%90%9C%E5%B0%8B%E6%BC%94%E7%AE%97%E6%B3%95",
     description:
-      "該演算法使用的啟發函式為計算鄰近節點的平均花費作為該節點的花費，屬於不同heuristic function的實作，能更有效地預測終點距離進而走出最短路徑。",
+      "該演算法使用的啟發函式為計算鄰近節點的平均花費作為該節點的花費，屬於不同heuristic function的實作，在某些情況能更有效地預測終點距離進而走出最短路徑。",
     timeComplexity: "O(E+VlogV)",
     spaceComplexity: "O(b^d)",
   },
